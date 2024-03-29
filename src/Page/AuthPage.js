@@ -1,5 +1,6 @@
 import LoginForm from "../components/AuthForm";
 import backgroundImage from "../assets/background.jpg";
+import Header from "../components/Header";
 export default function AuthPage() {
   return (
     <div className="relative">

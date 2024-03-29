@@ -5,8 +5,10 @@ import {
 } from "firebase/auth";
 import { auth } from "../utils/firebase.config";
 import { validateData } from "../utils/utils";
+import { useNavigate } from "react-router-dom";
 export default function LoginForm() {
   const [isSignIn, setIsSignIn] = useState(true);
+  const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [isValidName, setIsValidName] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
@@ -15,6 +17,8 @@ export default function LoginForm() {
   const emailRef = useRef(null);
   const passwordRef = useRef(null);
   const formRef = useRef(null);
+
+  const navigate = useNavigate();
 
   function handleAuthentication() {
     const isValid = validateData(
@@ -34,11 +38,12 @@ export default function LoginForm() {
             // Signed in
             const user = userCredential.user;
             console.log(user);
+            navigate("/browse");
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode + " " + errorMessage);
+            setShowErrorMessage(true);
           });
       } else {
         validateEmail();
@@ -56,11 +61,16 @@ export default function LoginForm() {
             // Signed up
             const user = userCredential.user;
             console.log(user);
+            // navigate("/browse");
+          })
+          .then(() => {
+            auth.currentUser.updateProfile({
+              displayName: nameRef.current.value,
+            });
           })
           .catch((error) => {
             const errorCode = error.code;
             const errorMessage = error.message;
-            console.log(errorCode + " " + errorMessage);
           });
       } else {
         validateName();
@@ -107,6 +117,15 @@ export default function LoginForm() {
 
   return (
     <div className="login-form bg-transparent m-2">
+      <div className=" bg-yellow-600">
+        {showErrorMessage && (
+          <div className="p-4">
+            <h1 className=" font-medium">
+              Incorrect credentials. Please try again
+            </h1>
+          </div>
+        )}
+      </div>
       <h1 className=" text-3xl text-white font-medium p-6">
         {isSignIn ? "Sign In" : "Sign Up"}
       </h1>
@@ -159,7 +178,7 @@ export default function LoginForm() {
         )}
         <button
           type="submit"
-          className="p-4 m-4 bg-red-600 text-white rounded-xl"
+          className="p-4 m-4 bg-red-600 text-white rounded-xl hover:bg-red-700"
           onClick={handleAuthentication}
         >
           {isSignIn ? "Sign In" : "Sign Up"}
@@ -169,12 +188,22 @@ export default function LoginForm() {
       {isSignIn ? (
         <div onClick={handleSignUp} className=" cursor-pointer">
           {" "}
-          <p className="text-white m-5">New to Netflix? Sign up here</p>{" "}
+          <p className="text-white m-5 inline-block">
+            New to Netflix?{" "}
+            <span className="text-white inline-block hover:underline">
+              Sign up here
+            </span>
+          </p>
         </div>
       ) : (
         <div onClick={handleSignUp} className=" cursor-pointer">
           {" "}
-          <p className="text-white m-5">Already a member? Sign in here</p>{" "}
+          <p className="text-white m-5 inline-block">
+            Already a member?{" "}
+            <span className="text-white inline-block hover:underline">
+              Sign in here
+            </span>
+          </p>
         </div>
       )}
     </div>
