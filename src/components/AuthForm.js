@@ -1,26 +1,86 @@
 import { useRef, useState } from "react";
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from "firebase/auth";
+import { auth } from "../utils/firebase.config";
+import { validateData } from "../utils/utils";
 export default function LoginForm() {
   const [isSignIn, setIsSignIn] = useState(true);
   const [isValidName, setIsValidName] = useState(true);
   const [isValidEmail, setIsValidEmail] = useState(true);
   const [isValidPassword, setIsValidPassword] = useState(true);
 
-  const name = useRef(null);
-  const email = useRef(null);
-  const password = useRef(null);
+  const nameRef = useRef(null);
+  const emailRef = useRef(null);
+  const passwordRef = useRef(null);
+  const formRef = useRef(null);
+
+  function handleAuthentication() {
+    const isValid = validateData(
+      nameRef?.current?.value,
+      emailRef.current.value,
+      passwordRef.current.value
+    );
+    if (isSignIn) {
+      if (isValid.email && isValid.password) {
+        //api call for sign in
+        signInWithEmailAndPassword(
+          auth,
+          emailRef.current.value,
+          passwordRef.current.value
+        )
+          .then((userCredential) => {
+            // Signed in
+            const user = userCredential.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + " " + errorMessage);
+          });
+      } else {
+        validateEmail();
+        validatePassword();
+      }
+    } else {
+      if (isValid.name && isValid.email && isValid.password) {
+        //api call for sign in
+        createUserWithEmailAndPassword(
+          auth,
+          emailRef.current.value,
+          passwordRef.current.value
+        )
+          .then((userCredential) => {
+            // Signed up
+            const user = userCredential.user;
+            console.log(user);
+          })
+          .catch((error) => {
+            const errorCode = error.code;
+            const errorMessage = error.message;
+            console.log(errorCode + " " + errorMessage);
+          });
+      } else {
+        validateName();
+        validateEmail();
+        validatePassword();
+      }
+    }
+  }
 
   function handleSignUp() {
+    formRef.current.reset();
     setIsSignIn(!isSignIn);
+    setIsValidName(true);
     setIsValidEmail(true);
     setIsValidPassword(true);
   }
 
   function validateName() {
-    const isValid =
-      /(^[A-Za-z]{3,16})([ ]{0,1})([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})?([ ]{0,1})?([A-Za-z]{3,16})/.test(
-        name.current.value
-      );
-    if (!isValid) {
+    const isValid = validateData(nameRef.current.value, null, null);
+    if (!isValid.name) {
       setIsValidName(false);
     } else {
       setIsValidName(true);
@@ -28,10 +88,8 @@ export default function LoginForm() {
   }
 
   function validateEmail() {
-    const isValid = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(
-      email.current.value
-    );
-    if (!isValid) {
+    const isValid = validateData(null, emailRef.current.value, null);
+    if (!isValid.email) {
       setIsValidEmail(false);
     } else {
       setIsValidEmail(true);
@@ -39,10 +97,8 @@ export default function LoginForm() {
   }
 
   function validatePassword() {
-    const isValid = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(
-      password.current.value
-    );
-    if (!isValid) {
+    const isValid = validateData(null, null, passwordRef.current.value);
+    if (!isValid.password) {
       setIsValidPassword(false);
     } else {
       setIsValidPassword(true);
@@ -54,11 +110,15 @@ export default function LoginForm() {
       <h1 className=" text-3xl text-white font-medium p-6">
         {isSignIn ? "Sign In" : "Sign Up"}
       </h1>
-      <form className="flex flex-col">
+      <form
+        onSubmit={(e) => e.preventDefault()}
+        ref={formRef}
+        className="flex flex-col"
+      >
         {!isSignIn && (
           <div className="flex flex-col flex-1">
             <input
-              ref={name}
+              ref={nameRef}
               type="text"
               placeholder="Full Name"
               className="p-2 m-2 bg-transparent text-white border border-white rounded-lg "
@@ -72,7 +132,7 @@ export default function LoginForm() {
           </div>
         )}
         <input
-          ref={email}
+          ref={emailRef}
           type="text"
           placeholder="Email Address"
           className="p-2 m-2 bg-transparent text-white border border-white rounded-lg"
@@ -84,7 +144,7 @@ export default function LoginForm() {
           </div>
         )}
         <input
-          ref={password}
+          ref={passwordRef}
           type="password"
           placeholder="Password"
           className="p-2 m-2 bg-transparent text-white border border-white rounded-lg"
@@ -100,6 +160,7 @@ export default function LoginForm() {
         <button
           type="submit"
           className="p-4 m-4 bg-red-600 text-white rounded-xl"
+          onClick={handleAuthentication}
         >
           {isSignIn ? "Sign In" : "Sign Up"}
         </button>
