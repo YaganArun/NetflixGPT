@@ -1,11 +1,10 @@
-import LoginForm from "../components/AuthForm";
+import AuthForm from "../components/AuthForm";
 import backgroundImage from "../assets/background.jpg";
-import Header from "../components/Header";
 export default function AuthPage() {
   return (
     <div className="relative">
       <div className="login-form absolute z-20 my-auto top-0 bottom-0 mx-auto left-0 right-0 w-[30%] h-[60%]">
-        <LoginForm></LoginForm>
+        <AuthForm></AuthForm>
       </div>
       <div className="bg-black absolute z-10  my-auto top-0 bottom-0 mx-auto left-0 right-0 w-[30%] h-[80%] opacity-70 rounded-lg"></div>
       <div className="bg-black">

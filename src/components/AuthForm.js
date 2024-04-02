@@ -2,11 +2,14 @@ import { useRef, useState } from "react";
 import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  updateProfile,
 } from "firebase/auth";
 import { auth } from "../utils/firebase.config";
 import { validateData } from "../utils/utils";
-import { useNavigate } from "react-router-dom";
-export default function LoginForm() {
+import { useDispatch } from "react-redux";
+import { addUser } from "../slice/userSice";
+
+export default function AuthForm() {
   const [isSignIn, setIsSignIn] = useState(true);
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [isValidName, setIsValidName] = useState(true);
@@ -18,7 +21,7 @@ export default function LoginForm() {
   const passwordRef = useRef(null);
   const formRef = useRef(null);
 
-  const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   function handleAuthentication() {
     const isValid = validateData(
@@ -37,8 +40,6 @@ export default function LoginForm() {
           .then((userCredential) => {
             // Signed in
             const user = userCredential.user;
-            console.log(user);
-            navigate("/browse");
           })
           .catch((error) => {
             const errorCode = error.code;
@@ -51,7 +52,7 @@ export default function LoginForm() {
       }
     } else {
       if (isValid.name && isValid.email && isValid.password) {
-        //api call for sign in
+        //api call for sign up
         createUserWithEmailAndPassword(
           auth,
           emailRef.current.value,
@@ -59,13 +60,19 @@ export default function LoginForm() {
         )
           .then((userCredential) => {
             // Signed up
-            const user = userCredential.user;
-            console.log(user);
-            // navigate("/browse");
-          })
-          .then(() => {
-            auth.currentUser.updateProfile({
+            // const user = userCredential.user;
+            // IMP : auth changes, so userSlice is being updated with data at this point.
+            updateProfile(auth.currentUser, {
               displayName: nameRef.current.value,
+            }).then(() => {
+              // profile creation successfull
+              dispatch(
+                addUser({
+                  uid: auth.currentUser.uid,
+                  email: auth.currentUser.email,
+                  displayName: auth.currentUser.displayName,
+                })
+              );
             });
           })
           .catch((error) => {
