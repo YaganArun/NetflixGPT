@@ -13,6 +13,8 @@ export default function VideoBackground({ videoId }) {
           trailerVideoKey +
           "?si=NPei45Oy4gBqRJ2e?&autoplay=1&mute=1&loop=1&controls=0"
         }
+        height={360}
+        width={360}
         title="YouTube video player"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         referrerPolicy="strict-origin-when-cross-origin"

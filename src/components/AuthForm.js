@@ -39,11 +39,11 @@ export default function AuthForm() {
         )
           .then((userCredential) => {
             // Signed in
-            const user = userCredential.user;
+            // const user = userCredential.user;
           })
           .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
             setShowErrorMessage(true);
           });
       } else {
@@ -76,8 +76,8 @@ export default function AuthForm() {
             });
           })
           .catch((error) => {
-            const errorCode = error.code;
-            const errorMessage = error.message;
+            // const errorCode = error.code;
+            // const errorMessage = error.message;
           });
       } else {
         validateName();

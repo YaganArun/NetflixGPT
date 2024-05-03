@@ -6,14 +6,14 @@ import Header from "../components/Header";
 
 import { useEffect } from "react";
 import { addUser, removeUser } from "../slice/userSice";
-import { removeNowPlayingMovies } from "../slice/moviesSlice";
+import { removeNowPlayingMovies, removeTrailer } from "../slice/moviesSlice";
 
 export default function Body() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    onAuthStateChanged(auth, (user) => {
       if (user) {
         //User is signed in
         const { uid, email, displayName } = user;
@@ -23,6 +23,7 @@ export default function Body() {
         // User is signed out
         dispatch(removeUser());
         dispatch(removeNowPlayingMovies());
+        dispatch(removeTrailer());
         navigate("/auth");
       }
       // return unsubscribe();
@@ -30,7 +31,7 @@ export default function Body() {
   }, []);
 
   return (
-    <div className="w-screen">
+    <div className="w-screen relative">
       <Header />
       <Outlet></Outlet>
     </div>

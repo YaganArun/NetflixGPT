@@ -8,6 +8,10 @@ export const URL = {
     "https://api.themoviedb.org/3/movie/now_playing?language=en-US&page=1",
   getMovieVideos:
     "https://api.themoviedb.org/3/movie/823464/videos?language=en-US",
+  getPopularMovies:
+    "https://api.themoviedb.org/3/movie/popular?language=en-US&page=1",
+  getUpcomingMovies:
+    "https://api.themoviedb.org/3/movie/upcoming?language=en-US&page=1",
 };
 
 export const API_OPTION = {

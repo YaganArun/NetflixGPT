@@ -1,16 +1,17 @@
-import { useSelector } from "react-redux";
+// import { useSelector } from "react-redux";
 import MainContainer from "../components/MainContainer";
 import SecondryContainer from "../components/SecondryContainer";
 
 export default function BrowsePage() {
-  const user = useSelector((store) => store.user);
+  // const user = useSelector((store) => store.user);
 
   return (
-    <div className=" h-screen w-screen">
-      <div className="main-container relative overflow-x-hidden">
+    <div className="w-screen h-screen relative bg-black">
+      <div className="main-container">
         <MainContainer />
       </div>
-      <div className="bg-black h-screen">
+      <div className="w-screen h-screen bg-black absolute top-full"></div>
+      <div className="w-screen absolute top-2/3">
         <SecondryContainer />
       </div>
     </div>
